@@ -31,11 +31,9 @@
 #include <string>
 
 #ifdef _WIN32 // windows
-#include <windows.h>
 #include <io.h>
 #define access    _access_s
 #elif defined __linux__ || defined __APPLE__ // linux || apple
-#include <dlfcn.h>
 #include <unistd.h>
 #else
 #error "Operation system not supported"
@@ -140,7 +138,7 @@ void* DynamicLib::function(const char* name)
     if (m_library) {
         return
 #ifdef _WIN32 // windows
-            GetProcAddress(m_library, name);
+            reinterpret_cast<void*>(GetProcAddress(m_library, name));
 #elif defined __linux__ || defined __APPLE__ // linux || apple
             dlsym(m_library, name);
 #else

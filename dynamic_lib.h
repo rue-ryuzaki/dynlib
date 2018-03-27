@@ -27,9 +27,14 @@
 #ifndef DYNLIB_DYNAMIC_LIB_H
 #define DYNLIB_DYNAMIC_LIB_H
 
-#if defined __linux__ || defined __APPLE__ // linux || apple
+#ifdef _WIN32 // windows
+#include <windows.h>
+#elif defined __linux__ || defined __APPLE__ // linux || apple
 #include <dlfcn.h>
-#endif // __linux__ || __APPLE__
+#else
+#error "Operation system not supported"
+#endif // _WIN32
+
 #include <functional>
 
 // -----------------------------------------------------------------------------
@@ -60,7 +65,13 @@ public:
     }
 
 private:
+#ifdef _WIN32 // windows
+    HMODULE m_library;
+#elif defined __linux__ || defined __APPLE__ // linux || apple
     void*   m_library;
+#else
+#error "Operation system not supported"
+#endif // _WIN32
 
     DynamicLib(const DynamicLib&) = delete;
     DynamicLib& operator =(const DynamicLib&) = delete;
