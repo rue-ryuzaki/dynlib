@@ -59,9 +59,9 @@ public:
     void*   function(const char* name);
 
     template <class T>
-    inline std::function<T*()> function_cast(const char* name)
+    inline std::function<T()> function_cast(const char* name)
     {
-        return std::bind(reinterpret_cast<T*(*)()>(function(name)));
+        return std::bind(reinterpret_cast<T(*)()>(function(name)));
     }
 
 private:
