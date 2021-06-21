@@ -3,7 +3,7 @@
  *
  * Cross-platform project to work with shared (dynamic) libraries in C++
  *
- * Copyright (c) 2018 Golubchikov Mihail
+ * Copyright (c) 2018-2021 Golubchikov Mihail
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,13 +28,22 @@
 #include "lib_extensions.h"
 
 #include <algorithm>
+#include <stdexcept>
 #include <string>
 
 #ifdef _WIN32 // windows
 #include <io.h>
 #define access    _access_s
+
+#define DYNLIB_OPEN(x,y) LoadLibrary(x)
+#define DYNLIB_CLOSE(x) FreeLibrary(x)
+#define DYNLIB_GET_FUNC(x,y) GetProcAddress(x,y)
 #elif defined __linux__ || defined __APPLE__ // linux || apple
 #include <unistd.h>
+
+#define DYNLIB_OPEN(x,y) dlopen(x,y)
+#define DYNLIB_CLOSE(x) dlclose(x)
+#define DYNLIB_GET_FUNC(x,y) dlsym(x,y)
 #else
 #error "Operation system not supported"
 #endif // _WIN32
@@ -73,13 +82,7 @@ DynamicLib::~DynamicLib()
 }
 
 // -----------------------------------------------------------------------------
-#ifdef _WIN32 // windows
-void DynamicLib::open(const char* name)
-#elif defined __linux__ || defined __APPLE__ // linux || apple
 void DynamicLib::open(const char* name, int mode)
-#else
-#error "Operation system not supported"
-#endif // _WIN32
 {
     close();
     std::string file = std::string(name);
@@ -107,27 +110,14 @@ void DynamicLib::open(const char* name, int mode)
     if (!fileExists(file)) {
         throw std::invalid_argument("library file '" + file + "' not exist");
     }
-    m_library =
-#ifdef _WIN32 // windows
-            LoadLibrary(file.c_str());
-#elif defined __linux__ || defined __APPLE__ // linux || apple
-            dlopen(file.c_str(), mode);
-#else
-#error "Operation system not supported"
-#endif // _WIN32
+    m_library = DYNLIB_OPEN(file.c_str(), mode);
 }
 
 // -----------------------------------------------------------------------------
 void DynamicLib::close()
 {
     if (m_library) {
-#ifdef _WIN32 // windows
-        FreeLibrary(m_library);
-#elif defined __linux__ || defined __APPLE__ // linux || apple
-        dlclose(m_library);
-#else
-#error "Operation system not supported"
-#endif // _WIN32
+        DYNLIB_CLOSE(m_library);
         m_library = nullptr;
     }
 }
@@ -136,15 +126,8 @@ void DynamicLib::close()
 void* DynamicLib::function(const char* name)
 {
     if (m_library) {
-        return
-#ifdef _WIN32 // windows
-            reinterpret_cast<void*>(GetProcAddress(m_library, name));
-#elif defined __linux__ || defined __APPLE__ // linux || apple
-            dlsym(m_library, name);
-#else
-#error "Operation system not supported"
-#endif // _WIN32
+        return reinterpret_cast<void*>(DYNLIB_GET_FUNC(m_library, name));
     } else {
-        return nullptr;// TODO
+        return nullptr;
     }
 }

@@ -3,7 +3,7 @@
  *
  * Cross-platform project to work with shared (dynamic) libraries in C++
  *
- * Copyright (c) 2018 Golubchikov Mihail
+ * Copyright (c) 2018-2021 Golubchikov Mihail
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,17 @@
  * SOFTWARE.
  */
 
-#ifndef DYNLIB_DYNAMIC_LIB_H
-#define DYNLIB_DYNAMIC_LIB_H
+#ifndef DYNLIB_DYNAMIC_LIB_H_
+#define DYNLIB_DYNAMIC_LIB_H_
 
 #ifdef _WIN32 // windows
 #include <windows.h>
+#define DYNLIB_DEFAULT_MODE 1
+typedef HMODULE DynlibPtr;
 #elif defined __linux__ || defined __APPLE__ // linux || apple
 #include <dlfcn.h>
+#define DYNLIB_DEFAULT_MODE RTLD_LAZY
+typedef void* DynlibPtr;
 #else
 #error "Operation system not supported"
 #endif // _WIN32
@@ -46,13 +50,7 @@ public:
     DynamicLib();
     ~DynamicLib();
 
-#ifdef _WIN32 // windows
-    void    open(const char* name);
-#elif defined __linux__ || defined __APPLE__ // linux || apple
-    void    open(const char* name, int mode = RTLD_LAZY);
-#else
-#error "Operation system not supported"
-#endif // _WIN32
+    void    open(const char* name, int mode = DYNLIB_DEFAULT_MODE);
 
     void    close();
 
@@ -65,16 +63,10 @@ public:
     }
 
 private:
-#ifdef _WIN32 // windows
-    HMODULE m_library;
-#elif defined __linux__ || defined __APPLE__ // linux || apple
-    void*   m_library;
-#else
-#error "Operation system not supported"
-#endif // _WIN32
+    DynlibPtr   m_library;
 
     DynamicLib(const DynamicLib&) = delete;
     DynamicLib& operator =(const DynamicLib&) = delete;
 };
 
-#endif // DYNLIB_DYNAMIC_LIB_H
+#endif // DYNLIB_DYNAMIC_LIB_H_

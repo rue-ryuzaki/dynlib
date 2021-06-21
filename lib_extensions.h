@@ -3,7 +3,7 @@
  *
  * Cross-platform project to work with shared (dynamic) libraries in C++
  *
- * Copyright (c) 2018 Golubchikov Mihail
+ * Copyright (c) 2018-2021 Golubchikov Mihail
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,8 @@
  * SOFTWARE.
  */
 
-#ifndef DYNLIB_LIB_EXTENSIONS_H
-#define DYNLIB_LIB_EXTENSIONS_H
+#ifndef DYNLIB_LIB_EXTENSIONS_H_
+#define DYNLIB_LIB_EXTENSIONS_H_
 
 #include <string>
 #include <vector>
@@ -43,4 +43,4 @@ const std::vector<std::string> library_static_extensions  = { ".bundle", ".a" };
 #error "Operation system not supported"
 #endif // _WIN32
 
-#endif // DYNLIB_LIB_EXTENSIONS_H
+#endif // DYNLIB_LIB_EXTENSIONS_H_
