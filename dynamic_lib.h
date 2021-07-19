@@ -50,14 +50,14 @@ public:
     DynamicLib();
     ~DynamicLib();
 
-    void    open(const char* name, int mode = DYNLIB_DEFAULT_MODE);
+    void    open(char const* name, int mode = DYNLIB_DEFAULT_MODE);
 
     void    close();
 
-    void*   function(const char* name);
+    void*   function(char const* name);
 
     template <class T>
-    inline std::function<T()> function_cast(const char* name)
+    inline std::function<T()> function_cast(char const* name)
     {
         return std::bind(reinterpret_cast<T(*)()>(function(name)));
     }
@@ -65,8 +65,8 @@ public:
 private:
     DynlibPtr   m_library;
 
-    DynamicLib(const DynamicLib&) = delete;
-    DynamicLib& operator =(const DynamicLib&) = delete;
+    DynamicLib(DynamicLib const&) = delete;
+    DynamicLib& operator =(DynamicLib const&) = delete;
 };
 
 #endif // DYNLIB_DYNAMIC_LIB_H_

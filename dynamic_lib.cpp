@@ -48,14 +48,15 @@
 #error "Operation system not supported"
 #endif // _WIN32
 
+namespace {
 // -----------------------------------------------------------------------------
-static bool fileExists(const std::string& file)
+static bool fileExists(std::string const& file)
 {
     return access(file.c_str(), 0) == 0;
 }
 
 // -----------------------------------------------------------------------------
-static std::string extension(const std::string& str)
+static std::string extension(std::string const& str)
 {
     std::string file = str;
     size_t pos = file.rfind('/');
@@ -66,6 +67,7 @@ static std::string extension(const std::string& str)
     return ((pos == std::string::npos) ? std::string()
                                        : file.substr(pos, std::string::npos));
 }
+} //
 
 // -----------------------------------------------------------------------------
 // -- DynamicLib ---------------------------------------------------------------
@@ -82,13 +84,13 @@ DynamicLib::~DynamicLib()
 }
 
 // -----------------------------------------------------------------------------
-void DynamicLib::open(const char* name, int mode)
+void DynamicLib::open(char const* name, int mode)
 {
     close();
     std::string file = std::string(name);
     std::string ext = extension(file);
     if (ext.empty()) {
-        for (const std::string& ex : library_dynamic_extensions) {
+        for (auto const& ex : library_dynamic_extensions) {
             if (fileExists(file + ex)) {
                 ext = ex;
                 break;
@@ -123,7 +125,7 @@ void DynamicLib::close()
 }
 
 // -----------------------------------------------------------------------------
-void* DynamicLib::function(const char* name)
+void* DynamicLib::function(char const* name)
 {
     if (m_library) {
         return reinterpret_cast<void*>(DYNLIB_GET_FUNC(m_library, name));

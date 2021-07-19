@@ -31,14 +31,14 @@
 #include <vector>
 
 #ifdef _WIN32 // windows
-const std::vector<std::string> library_dynamic_extensions = { ".dll" };
-const std::vector<std::string> library_static_extensions  = { ".lib" };
+std::vector<std::string> const library_dynamic_extensions = { ".dll" };
+std::vector<std::string> const library_static_extensions  = { ".lib" };
 #elif defined __linux__ // linux
-const std::vector<std::string> library_dynamic_extensions = { ".so" };
-const std::vector<std::string> library_static_extensions  = { ".a" };
+std::vector<std::string> const library_dynamic_extensions = { ".so" };
+std::vector<std::string> const library_static_extensions  = { ".a" };
 #elif defined __APPLE__ // apple
-const std::vector<std::string> library_dynamic_extensions = { ".dylib", ".so" };
-const std::vector<std::string> library_static_extensions  = { ".bundle", ".a" };
+std::vector<std::string> const library_dynamic_extensions = { ".dylib", ".so" };
+std::vector<std::string> const library_static_extensions  = { ".bundle", ".a" };
 #else
 #error "Operation system not supported"
 #endif // _WIN32
