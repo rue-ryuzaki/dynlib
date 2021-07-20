@@ -35,15 +35,19 @@
 #include <io.h>
 #define access    _access_s
 
+namespace dynlib {
 #define DYNLIB_OPEN(x,y) LoadLibrary(x)
 #define DYNLIB_CLOSE(x) FreeLibrary(x)
 #define DYNLIB_GET_FUNC(x,y) GetProcAddress(x,y)
+} // dynlib
 #elif defined __linux__ || defined __APPLE__ // linux || apple
 #include <unistd.h>
 
+namespace dynlib {
 #define DYNLIB_OPEN(x,y) dlopen(x,y)
 #define DYNLIB_CLOSE(x) dlclose(x)
 #define DYNLIB_GET_FUNC(x,y) dlsym(x,y)
+} // dynlib
 #else
 #error "Operation system not supported"
 #endif // _WIN32
@@ -88,8 +92,8 @@ DynamicLib::~DynamicLib()
 void DynamicLib::open(char const* name, int mode)
 {
     close();
-    std::string file = std::string(name);
-    std::string ext = detail::_extension(file);
+    auto file = std::string(name);
+    auto ext = detail::_extension(file);
     if (ext.empty()) {
         for (auto const& ex : library_dynamic_extensions) {
             if (detail::_file_exists(file + ex)) {
@@ -103,15 +107,15 @@ void DynamicLib::open(char const* name, int mode)
         }
         file += ext;
     } else {
-        auto it = std::find(library_dynamic_extensions.begin(),
-                            library_dynamic_extensions.end(), ext);
-        if (it == library_dynamic_extensions.end()) {
+        auto it = std::find(std::begin(library_dynamic_extensions),
+                            std::end(library_dynamic_extensions), ext);
+        if (it == std::end(library_dynamic_extensions)) {
             throw std::invalid_argument("unexpected library extension "
                                         "'" + ext + "'");
         }
     }
     if (!detail::_file_exists(file)) {
-        throw std::invalid_argument("library file '" + file + "' not exist");
+        throw std::invalid_argument("library file '" + file + "' doesn't exist");
     }
     m_library = DYNLIB_OPEN(file.c_str(), mode);
 }

@@ -27,19 +27,23 @@
 #ifndef DYNLIB_DYNAMIC_LIB_H_
 #define DYNLIB_DYNAMIC_LIB_H_
 
+#include <functional>
+
 #ifdef _WIN32 // windows
 #include <windows.h>
+namespace dynlib {
 #define DYNLIB_DEFAULT_MODE 1
 typedef HMODULE DynlibPtr;
+} // dynlib
 #elif defined __linux__ || defined __APPLE__ // linux || apple
 #include <dlfcn.h>
+namespace dynlib {
 #define DYNLIB_DEFAULT_MODE RTLD_LAZY
 typedef void* DynlibPtr;
+} // dynlib
 #else
 #error "Operation system not supported"
 #endif // _WIN32
-
-#include <functional>
 
 namespace dynlib {
 // -----------------------------------------------------------------------------
@@ -52,7 +56,6 @@ public:
     ~DynamicLib();
 
     void    open(char const* name, int mode = DYNLIB_DEFAULT_MODE);
-
     void    close();
 
     void*   function(char const* name);
@@ -64,7 +67,7 @@ public:
     }
 
 private:
-    DynlibPtr   m_library;
+    DynlibPtr m_library;
 
     DynamicLib(DynamicLib const&) = delete;
     DynamicLib& operator =(DynamicLib const&) = delete;
