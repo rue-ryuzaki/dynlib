@@ -48,15 +48,16 @@
 #error "Operation system not supported"
 #endif // _WIN32
 
-namespace {
+namespace dynlib {
+namespace detail {
 // -----------------------------------------------------------------------------
-static bool fileExists(std::string const& file)
+static bool _file_exists(std::string const& file)
 {
     return access(file.c_str(), 0) == 0;
 }
 
 // -----------------------------------------------------------------------------
-static std::string extension(std::string const& str)
+static std::string _extension(std::string const& str)
 {
     std::string file = str;
     size_t pos = file.rfind('/');
@@ -67,7 +68,7 @@ static std::string extension(std::string const& str)
     return ((pos == std::string::npos) ? std::string()
                                        : file.substr(pos, std::string::npos));
 }
-} //
+} // detail
 
 // -----------------------------------------------------------------------------
 // -- DynamicLib ---------------------------------------------------------------
@@ -88,10 +89,10 @@ void DynamicLib::open(char const* name, int mode)
 {
     close();
     std::string file = std::string(name);
-    std::string ext = extension(file);
+    std::string ext = detail::_extension(file);
     if (ext.empty()) {
         for (auto const& ex : library_dynamic_extensions) {
-            if (fileExists(file + ex)) {
+            if (detail::_file_exists(file + ex)) {
                 ext = ex;
                 break;
             }
@@ -109,7 +110,7 @@ void DynamicLib::open(char const* name, int mode)
                                         "'" + ext + "'");
         }
     }
-    if (!fileExists(file)) {
+    if (!detail::_file_exists(file)) {
         throw std::invalid_argument("library file '" + file + "' not exist");
     }
     m_library = DYNLIB_OPEN(file.c_str(), mode);
@@ -133,3 +134,4 @@ void* DynamicLib::function(char const* name)
         return nullptr;
     }
 }
+} // dynlib

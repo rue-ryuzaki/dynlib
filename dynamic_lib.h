@@ -41,6 +41,7 @@ typedef void* DynlibPtr;
 
 #include <functional>
 
+namespace dynlib {
 // -----------------------------------------------------------------------------
 // -- DynamicLib ---------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -68,5 +69,6 @@ private:
     DynamicLib(DynamicLib const&) = delete;
     DynamicLib& operator =(DynamicLib const&) = delete;
 };
+} // dynlib
 
 #endif // DYNLIB_DYNAMIC_LIB_H_

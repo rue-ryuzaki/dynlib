@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 
+namespace dynlib {
 #ifdef _WIN32 // windows
 std::vector<std::string> const library_dynamic_extensions = { ".dll" };
 std::vector<std::string> const library_static_extensions  = { ".lib" };
@@ -42,5 +43,6 @@ std::vector<std::string> const library_static_extensions  = { ".bundle", ".a" };
 #else
 #error "Operation system not supported"
 #endif // _WIN32
+} // dynlib
 
 #endif // DYNLIB_LIB_EXTENSIONS_H_
