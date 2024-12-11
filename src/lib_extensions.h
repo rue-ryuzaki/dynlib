@@ -3,7 +3,7 @@
  *
  * Cross-platform project to work with shared (dynamic) libraries in C++
  *
- * Copyright (c) 2018-2021 Golubchikov Mihail
+ * Copyright (c) 2018-2024 Golubchikov Mihail
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -24,25 +24,26 @@
  * SOFTWARE.
  */
 
-#ifndef DYNLIB_LIB_EXTENSIONS_H_
-#define DYNLIB_LIB_EXTENSIONS_H_
+#ifndef _DYNLIB_LIB_EXTENSIONS_H_
+#define _DYNLIB_LIB_EXTENSIONS_H_
 
 #include <string>
 #include <vector>
 
 namespace dynlib {
-#ifdef _WIN32 // windows
+#ifdef _WIN32  // windows
 std::vector<std::string> const library_dynamic_extensions = { ".dll" };
 std::vector<std::string> const library_static_extensions  = { ".lib" };
-#elif defined __linux__ // linux
+#elif defined __linux__  // linux
 std::vector<std::string> const library_dynamic_extensions = { ".so" };
 std::vector<std::string> const library_static_extensions  = { ".a" };
-#elif defined __APPLE__ // apple
+#elif defined __APPLE__  // apple
 std::vector<std::string> const library_dynamic_extensions = { ".dylib", ".so" };
 std::vector<std::string> const library_static_extensions  = { ".bundle", ".a" };
 #else
-#error "Operation system not supported"
-#endif // _WIN32
-} // dynlib
+std::vector<std::string> const library_dynamic_extensions = { };
+std::vector<std::string> const library_static_extensions  = { };
+#endif  // _WIN32
+}  // namespace dynlib
 
-#endif // DYNLIB_LIB_EXTENSIONS_H_
+#endif  // _DYNLIB_LIB_EXTENSIONS_H_

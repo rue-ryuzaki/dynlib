@@ -3,7 +3,7 @@
  *
  * Cross-platform project to work with shared (dynamic) libraries in C++
  *
- * Copyright (c) 2018-2021 Golubchikov Mihail
+ * Copyright (c) 2018-2024 Golubchikov Mihail
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,8 +12,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -24,54 +24,61 @@
  * SOFTWARE.
  */
 
-#ifndef DYNLIB_DYNAMIC_LIB_H_
-#define DYNLIB_DYNAMIC_LIB_H_
+#ifndef _DYNLIB_DYNAMIC_LIB_H_
+#define _DYNLIB_DYNAMIC_LIB_H_
 
 #include <functional>
 
-#ifdef _WIN32 // windows
-#include <windows.h>
 namespace dynlib {
-#define DYNLIB_DEFAULT_MODE 1
-typedef HMODULE DynlibPtr;
-} // dynlib
-#elif defined __linux__ || defined __APPLE__ // linux || apple
-#include <dlfcn.h>
-namespace dynlib {
-#define DYNLIB_DEFAULT_MODE RTLD_LAZY
-typedef void* DynlibPtr;
-} // dynlib
-#else
-#error "Operation system not supported"
-#endif // _WIN32
+// -----------------------------------------------------------------------------
+enum Mode {
+    ModeLocal       = 0x0000,
+    ModeLazy        = 0x0001,
+    ModeNow         = 0x0002,
+    ModeNoLoad      = 0x0004,
+    ModeDeepBind    = 0x0008,
+    ModeGlobal      = 0x0100,
+    ModeNodelete    = 0x1000,
+};
 
-namespace dynlib {
 // -----------------------------------------------------------------------------
 // -- DynamicLib ---------------------------------------------------------------
 // -----------------------------------------------------------------------------
 class DynamicLib
 {
+    DynamicLib(DynamicLib const&) = delete;
+    DynamicLib& operator =(DynamicLib const&) = delete;
+
 public:
     DynamicLib();
     ~DynamicLib();
 
-    void    open(char const* name, int mode = DYNLIB_DEFAULT_MODE);
-    void    close();
+    void
+    open(char const* name,
+            Mode mode = ModeLazy);
 
-    void*   function(char const* name);
+    bool
+    is_open() const;
 
-    template <class T>
-    inline std::function<T()> function_cast(char const* name)
+    void
+    close();
+
+    void*
+    function(
+            char const* name) const;
+
+    template <class T, class... Args>
+    inline std::function<T(Args...)>
+    function_cast(
+            char const* name) const
     {
-        return std::bind(reinterpret_cast<T(*)()>(function(name)));
+        return reinterpret_cast<T(*)(Args...)>(function(name));
     }
 
 private:
-    DynlibPtr m_library;
-
-    DynamicLib(DynamicLib const&) = delete;
-    DynamicLib& operator =(DynamicLib const&) = delete;
+    // -- data ----------------------------------------------------------------
+    void* m_library;
 };
-} // dynlib
+}  // namespace dynlib
 
-#endif // DYNLIB_DYNAMIC_LIB_H_
+#endif  // _DYNLIB_DYNAMIC_LIB_H_
