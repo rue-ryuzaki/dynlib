@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-#include "dynamic_lib.h"
+#include "dynlib/dynamic_lib.h"
 #include "lib_extensions.h"
 
 #include <algorithm>
@@ -101,7 +101,7 @@ DynamicLib::~DynamicLib()
 void
 DynamicLib::open(
         char const* name,
-        Mode mode)
+        int mode)
 {
     close();
     std::string file = std::string(name);

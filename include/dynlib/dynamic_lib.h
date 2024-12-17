@@ -55,7 +55,7 @@ public:
 
     void
     open(char const* name,
-            Mode mode = ModeLazy);
+            int mode = ModeLazy);
 
     bool
     is_open() const;

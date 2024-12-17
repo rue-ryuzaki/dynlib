@@ -26,6 +26,13 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 message(STATUS "${LIBRARY_NAME} version: ${PROJECT_VERSION}")
 message(STATUS "${LIBRARY_NAME} build standard: C++${CMAKE_CXX_STANDARD}")
 
+file(GLOB LIBRARY_HEADER "include/*.h*")
 file(GLOB LIBRARY_SOURCES "src/*.h*" "src/*.c*")
 
 add_library(${LIBRARY_NAME} ${LIBRARY_SOURCES})
+
+target_include_directories(
+   ${LIBRARY_NAME} PUBLIC
+       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
